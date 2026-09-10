@@ -1,6 +1,12 @@
 // Importar a lib Express
 import express from "express";
 
+//Importar Variaves de Ambiente 
+import dotenv from "dotenv";
+
+//Carregando as variaveis do .env
+dotenv.config()
+
 // Criar a Aplicação 
 const app = express()
 
@@ -11,6 +17,6 @@ import login from "./controllers/login.js";
 app.use('/', login)
 
 // iniciar o servidor na porta 8080
-app.listen(8080,()=>{
-    console.log("Servidor Iniciado na porta 8080: http://localhost:8080")
+app.listen(process.env.PORT,()=>{
+    console.log(`Servidor Iniciado na porta ${process.env.PORT}: http://localhost:${process.env.PORT}`)
 })
