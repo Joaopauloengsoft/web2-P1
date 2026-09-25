@@ -1,8 +1,18 @@
-import { parse } from "node:path";
+import { dirname, parse } from "node:path";
+import { fileURLToPath } from "url";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 
+//Importar Variaves de Ambiente 
+import dotenv from "dotenv";
+
+//Carregando as variaveis do .env
+dotenv.config()
+
     const dialect = process.env.DB_DIALECT ?? "mysql"
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);    
 
 export const AppDataSource = new DataSource({
     type: process.env.DB_DIALECT as "mysql",
@@ -15,5 +25,5 @@ export const AppDataSource = new DataSource({
     logging: true,
     entities: [],
     subscribers: [],
-    migrations: [],
+    migrations: [__dirname + "/migration/*.js"],
 }) 
