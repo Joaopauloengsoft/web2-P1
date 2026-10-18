@@ -18,6 +18,7 @@ export class CreateSituationsTable1790294237795 implements MigrationInterface {
                 {
                     name: "nameSituation",
                     type: "varchar",
+                    isUnique: true,
                 },
                 {
                     name: "createdAt",

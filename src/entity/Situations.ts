@@ -6,15 +6,15 @@ export class Situation {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({unique: true})
     nameSituation!: string;
 
-    @Column({type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
+    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     createdAt!: Date;
 
-    @Column({type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP"})
-    apdatedAt!: Date;
+    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+    updatedAt!: Date;
 
-    @OneToMany(() => User, (user) => user.situation) 
+    @OneToMany(() => User, (user) => user.situation)
     users!: User[]
 }

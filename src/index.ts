@@ -10,11 +10,16 @@ dotenv.config()
 // Criar a Aplicação 
 const app = express()
 
+//Criar um middleware para receber os dados no corpo da requisição
+app.use(express.json());
+
 // Incluir os Controolers
-import login from "./controllers/login.js";
+import AuthController from "./controllers/AuthController.js";
+import SituationsController from "./controllers/SituationsController.js";
 
 // Criar as rotas
-app.use('/', login)
+app.use('/', AuthController)
+app.use('/', SituationsController)
 
 // iniciar o servidor na porta 8080
 app.listen(process.env.PORT,()=>{
