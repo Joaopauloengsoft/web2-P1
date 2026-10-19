@@ -20,7 +20,7 @@ router.get("/situations", async(req: Request, res: Response) => {
         return;
 }   catch (error) {
         res.status(500).json({
-            mensagem: "Erro ao buscar situações!",
+            mensagem: "Erro ao listar situações!",
         });
         return;
 }
@@ -43,7 +43,7 @@ router.get("/situations/:id", async(req: Request, res: Response) => {
         return;
 }   catch (error) {
         res.status(500).json({
-            mensagem: "Erro ao buscar situações!",
+            mensagem: "Erro ao visualizar situação!",
         });
         return;
 }
@@ -70,6 +70,66 @@ router.post("/situations", async (req: Request, res: Response) => {
         });
     }
 });
+
+// Criar rota de edição de item
+router.put("/situations/:id", async(req: Request, res: Response) => {
+
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        const situationRepository = AppDataSource.getRepository(Situation);
+        const situation = await situationRepository.findOneBy({ id: Number(req.params.id) });
+        if (!situation) {
+            res.status(404).json({
+                mensagem: "Situação não encontrada!",
+            });
+            return;
+        }
+        //Atualizar os dados do item
+        situationRepository.merge(situation, data);
+
+        //Salvar os dados atualizados no banco de dados
+        const updatedSituation = await situationRepository.save(situation);
+
+        res.status(200).json({
+            mensagem: "Situação atualizada com sucesso!",
+            situation: updatedSituation,
+        });
+        
+}   catch (error) {
+        res.status(500).json({
+            mensagem: "Erro ao atualizar situações!",
+        });
+        return;
+}
+});
+
+
+// Criar rota para deletar item
+router.delete("/situations/:id", async(req: Request, res: Response) => {
+
+    try {
+        const { id } = req.params;
+        const situationRepository = AppDataSource.getRepository(Situation);
+        const situation = await situationRepository.findOneBy({ id: Number(req.params.id) });
+        if (!situation) {
+            res.status(404).json({
+                mensagem: "Situação não encontrada!",
+            });
+            return;
+        }
+        await situationRepository.remove(situation);
+        res.status(200).json({
+            mensagem: "Situação removida com sucesso!",
+        });
+    } catch (error) {
+        res.status(500).json({
+            mensagem: "Erro ao remover situação!",
+        });
+        return;
+    }
+});
+
 
 // Exportar a instrução da rota
 export default router;

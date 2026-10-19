@@ -26,7 +26,7 @@ export class CreateSituationsTable1790294237795 implements MigrationInterface {
                     default: "CURRENT_TIMESTAMP"
                 },
                 {
-                    name: "updateAt",
+                    name: "updatedAt",
                     type: "timestamp",
                     default: "CURRENT_TIMESTAMP",
                     onUpdate: "CURRENT_TIMESTAMP",
