@@ -11,8 +11,42 @@ import { Situation } from "../entity/Situations.js";
 const router = express.Router();
 
 // Criar rota GET principal
-router.get("/situations", (req: Request, res: Response) => {
-    res.send("Bem Vindo Pessoal! Tela de Situações na Rota");
+router.get("/situations", async(req: Request, res: Response) => {
+
+    try {
+        const situationRepository = AppDataSource.getRepository(Situation);
+        const situations = await situationRepository.find();
+        res.status(200).json(situations);
+        return;
+}   catch (error) {
+        res.status(500).json({
+            mensagem: "Erro ao buscar situações!",
+        });
+        return;
+}
+});
+
+// Criar rota visualização de item
+router.get("/situations/:id", async(req: Request, res: Response) => {
+
+    try {
+        const { id } = req.params;
+        const situationRepository = AppDataSource.getRepository(Situation);
+        const situation = await situationRepository.findOneBy({ id: Number(req.params.id) });
+        if (!situation) {
+            res.status(404).json({
+                mensagem: "Situação não encontrada!",
+            });
+            return;
+        }
+        res.status(200).json(situation);
+        return;
+}   catch (error) {
+        res.status(500).json({
+            mensagem: "Erro ao buscar situações!",
+        });
+        return;
+}
 });
 
 // Criar rota POST principal
