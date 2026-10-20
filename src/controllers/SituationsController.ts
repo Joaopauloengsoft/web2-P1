@@ -6,6 +6,7 @@ import type { Request, Response } from "express";
 // Importar o arquivo com as credenciais do Banco de Dados
 import { AppDataSource } from "../data-source.js";
 import { Situation } from "../entity/Situations.js";
+import { PaginationService } from '../services/PaginationService.js';
 
 // Criar a Aplicação
 const router = express.Router();
@@ -14,10 +15,26 @@ const router = express.Router();
 router.get("/situations", async(req: Request, res: Response) => {
 
     try {
+        //Obter o repositório da entidade Situation
         const situationRepository = AppDataSource.getRepository(Situation);
-        const situations = await situationRepository.find();
-        res.status(200).json(situations);
+
+        //Receber o número da página e definir página 1 com padrão
+        const page = Number(req.query.page) || 1;
+        console.log(page);
+
+        //Definir o limite de registros por página
+        const limit = 1;
+
+
+
+        const result = await PaginationService.paginate(situationRepository, page, limit, { id: "DESC" });
+
+        
+
+        //Retornar a resposta com os dados e informações de paginação
+        res.status(200).json(result);
         return;
+
 }   catch (error) {
         res.status(500).json({
             mensagem: "Erro ao listar situações!",
