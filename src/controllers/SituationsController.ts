@@ -23,7 +23,7 @@ router.get("/situations", async(req: Request, res: Response) => {
         console.log(page);
 
         //Definir o limite de registros por página
-        const limit = 1;
+        const limit = 10;
 
 
 
