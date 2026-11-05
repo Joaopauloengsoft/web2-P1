@@ -8,6 +8,8 @@ import { AppDataSource } from "../data-source.js";
 import { Situation } from "../entity/Situations.js";
 import { PaginationService } from '../services/PaginationService.js';
 
+import  *  as  yup  from  'yup' ;
+
 // Criar a Aplicação
 const router = express.Router();
 
@@ -71,6 +73,14 @@ router.post("/situations", async (req: Request, res: Response) => {
     try {
         const data = req.body;
 
+        const schema = yup.object().shape({
+            nameSituation: yup.string()
+            .required("O campo 'Nome' é obrigatório.")
+            .min(3, "O campo 'Nome' deve ter no mínimo 3 caracteres!")
+        });
+
+        await schema.validate(data, { abortEarly: false });
+
         const situationRepository = AppDataSource.getRepository(Situation);
 
         const newSituation = situationRepository.create(data);
@@ -82,6 +92,14 @@ router.post("/situations", async (req: Request, res: Response) => {
             situation: newSituation,
         });
     } catch (error) {
+        if (error instanceof yup.ValidationError) {
+            res.status(400).json({
+                mensagem: "Erro de validação!",
+                erros: error.inner.map((err) => err.message),
+            });
+            return;
+        }
+
         res.status(500).json({
             mensagem: "Erro ao cadastrar situação!",
         });
@@ -93,7 +111,17 @@ router.put("/situations/:id", async(req: Request, res: Response) => {
 
     try {
         const { id } = req.params;
+
         const data = req.body;
+
+        const schema = yup.object().shape({
+            nameSituation: yup.string()
+            .required("O campo 'Nome' é obrigatório.")
+            .min(3, "O campo 'Nome' deve ter no mínimo 3 caracteres!")
+        });
+
+        await schema.validate(data, { abortEarly: false });
+
         const situationRepository = AppDataSource.getRepository(Situation);
         const situation = await situationRepository.findOneBy({ id: Number(req.params.id) });
         if (!situation) {
@@ -113,11 +141,17 @@ router.put("/situations/:id", async(req: Request, res: Response) => {
             situation: updatedSituation,
         });
         
-}   catch (error) {
+}       catch (error) {
+        if (error instanceof yup.ValidationError) {
+            res.status(400).json({
+                mensagem: "Erro de validação!",
+                erros: error.inner.map((err) => err.message),
+            });
+            return;
+        }
         res.status(500).json({
             mensagem: "Erro ao atualizar situações!",
         });
-        return;
 }
 });
 
