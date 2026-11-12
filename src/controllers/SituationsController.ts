@@ -9,6 +9,7 @@ import { Situation } from "../entity/Situations.js";
 import { PaginationService } from '../services/PaginationService.js';
 
 import  *  as  yup  from  'yup' ;
+import { Not } from 'typeorm';
 
 // Criar a Aplicação
 const router = express.Router();
@@ -83,6 +84,16 @@ router.post("/situations", async (req: Request, res: Response) => {
 
         const situationRepository = AppDataSource.getRepository(Situation);
 
+        const existingSituation = await situationRepository.findOne({ 
+            where: { nameSituation: data.nameSituation } 
+        });
+        if (existingSituation) {
+            res.status(400).json({
+                mensagem: "Situação já cadastrada com este nome!",
+            });
+            return;
+        }
+
         const newSituation = situationRepository.create(data);
 
         await situationRepository.save(newSituation);
@@ -123,13 +134,29 @@ router.put("/situations/:id", async(req: Request, res: Response) => {
         await schema.validate(data, { abortEarly: false });
 
         const situationRepository = AppDataSource.getRepository(Situation);
-        const situation = await situationRepository.findOneBy({ id: Number(req.params.id) });
+
+        const situation = await situationRepository.findOneBy({ id: Number(req.params.id) }); 
         if (!situation) {
             res.status(404).json({
-                mensagem: "Situação não encontrada!",
+                mensagem: "Situação não encontrada!", 
             });
             return;
         }
+
+        const existingSituation = await situationRepository.findOne({
+            where: { 
+                nameSituation: data.nameSituation,
+                id: Not(parseInt(String(id), 10))
+
+            }
+        });
+        if (existingSituation) {
+            res.status(400).json({
+                mensagem: "Situação já cadastrada com este nome!",
+            });
+            return;
+        }
+
         //Atualizar os dados do item
         situationRepository.merge(situation, data);
 
