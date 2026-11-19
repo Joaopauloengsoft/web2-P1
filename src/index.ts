@@ -7,11 +7,17 @@ import dotenv from "dotenv";
 //Carregando as variaveis do .env
 dotenv.config()
 
+//Importar lib para permitir conexões de externas
+import cors from "cors";
+
 // Criar a Aplicação 
 const app = express()
 
 //Criar um middleware para receber os dados no corpo da requisição
 app.use(express.json());
+
+//Criar um middleware para permitir conexões externas
+app.use(cors());
 
 // Incluir os Controolers
 import AuthController from "./controllers/AuthController.js";
@@ -20,6 +26,7 @@ import UsersController from "./controllers/UsersController.js";
 import ProductSituationsController from "./controllers/ProductSituationsController.js";
 import ProductCategoriesController from "./controllers/ProductCategoriesController.js";
 import ProductsController from "./controllers/ProductsController.js";
+import TestConnectionController from "./controllers/TestConnectionController.js";
 
 // Criar as rotas
 app.use('/', AuthController)
@@ -28,6 +35,7 @@ app.use('/', UsersController)
 app.use('/', ProductSituationsController)
 app.use('/', ProductCategoriesController)
 app.use('/', ProductsController)
+app.use('/', TestConnectionController)
 
 // iniciar o servidor na porta 8080
 app.listen(process.env.PORT,()=>{
